@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intern Review Room &mdash; Engineering Operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              500: '#22c55e',
+              600: '#16a34a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .audio-bar {
+      animation: pulseBar 1.2s ease-in-out infinite alternate;
+    }
+    @keyframes pulseBar {
+      0% { height: 10%; }
+      100% { height: 100%; }
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans antialiased selection:bg-emerald-500/20 selection:text-emerald-300">
+
+  <!-- Top Header Navigation -->
+  <header class="border-b border-slate-800/80 px-6 py-4 flex items-center justify-between bg-slate-900/40 backdrop-blur-md">
+    <div class="flex items-center gap-3">
+      <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/20 animate-pulse"></div>
+      <h1 class="font-semibold text-sm tracking-tight text-slate-200">Session Review Studio</h1>
+      <span class="text-xs px-2 py-0.5 rounded border border-slate-700 bg-slate-800 text-slate-400 font-mono">Week 2 Stage</span>
+    </div>
+    <div class="text-xs text-slate-400 font-mono flex items-center gap-4">
+      <span>Meeting ID: <strong class="text-slate-300 font-normal">ENG-REV-4921</strong></span>
+      <span class="inline-block w-px h-3 bg-slate-800"></span>
+      <span class="text-emerald-400">Mentor Online</span>
+    </div>
+  </header>
+
+  <!-- Main Studio Workspace -->
+  <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 max-w-7xl w-full mx-auto p-6 gap-6">
+
+    <!-- Left Column: Audio Stream & Live Mentor Stage (7 Cols) -->
+    <section class="lg:col-span-7 flex flex-col gap-4">
+      
+      <!-- Video / Presence Canvas Card -->
+      <div class="relative bg-slate-900/60 border border-slate-800/80 rounded-xl p-8 flex flex-col items-center justify-center min-h-[380px] shadow-sm">
+        
+        <!-- Mentor Avatar & Sound Waves -->
+        <div class="relative mb-6">
+          <div class="w-24 h-24 rounded-2xl bg-gradient-to-b from-slate-800 to-slate-900 border border-slate-700/80 flex items-center justify-center text-slate-300 font-mono text-xl font-medium shadow-inner">
+            AI
+          </div>
+          <span class="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-emerald-500 border-2 border-slate-900"></span>
+        </div>
+
+        <div class="text-center max-w-sm mb-6">
+          <p class="font-medium text-slate-200 text-sm">Alex &mdash; Senior Tech Lead</p>
+          <p id="mentorStatus" class="text-xs text-slate-400 mt-1 font-mono">Listening for document upload...</p>
+        </div>
+
+        <!-- Waveform Visualizer -->
+        <div id="visualizer" class="flex items-center gap-1.5 h-8 opacity-20 transition-all duration-300">
+          <div class="w-1 bg-emerald-400 rounded-full h-2"></div>
+          <div class="w-1 bg-emerald-400 rounded-full h-5"></div>
+          <div class="w-1 bg-emerald-400 rounded-full h-8"></div>
+          <div class="w-1 bg-emerald-400 rounded-full h-3"></div>
+          <div class="w-1 bg-emerald-400 rounded-full h-6"></div>
+          <div class="w-1 bg-emerald-400 rounded-full h-2"></div>
+        </div>
+
+        <!-- Hidden Audio Player -->
+        <audio id="mentorAudio" class="hidden"></audio>
+      </div>
+
+      <!-- Spoken Transcript Box -->
+      <div class="bg-slate-900/40 border border-slate-800/80 rounded-xl p-5 flex flex-col gap-2">
+        <span class="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">Live Mentor Voice Transcript</span>
+        <p id="transcriptText" class="text-sm text-slate-300 leading-relaxed italic">
+          "Awaiting your project document to begin the code and architecture audit."
+        </p>
+      </div>
+    </section>
+
+    <!-- Right Column: Document Drop & Verification Metrics (5 Cols) -->
+    <section class="lg:col-span-5 flex flex-col gap-4">
+
+      <!-- Upload Form Card -->
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-6">
+        <h2 class="text-sm font-semibold text-slate-200 mb-4">Submit Evaluation Assets</h2>
+
+        <form id="uploadForm" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Student Full Name</label>
+            <input type="text" id="studentName" required value="Mithun P" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-slate-600 transition" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Registered Student Email</label>
+            <input type="email" id="studentEmail" required value="student@example.com" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-slate-600 transition" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Internship Stage</label>
+            <select id="weekNo" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-slate-600 transition">
+              <option value="1">Week 1: Schema & Architecture Audit</option>
+              <option value="2" selected>Week 2: Backend Logic & Endpoints</option>
+              <option value="3">Week 3: Frontend State & Integration</option>
+              <option value="4">Week 4: Final Testing & Deployment</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Project Report / Code Documentation (.pdf)</label>
+            <div id="dropZone" class="border border-dashed border-slate-700 hover:border-slate-500 rounded-lg p-5 text-center cursor-pointer transition bg-slate-950/50">
+              <p class="text-xs text-slate-300">Click to select or drop file here</p>
+              <p id="fileName" class="text-[11px] font-mono text-slate-500 mt-1">No file attached yet</p>
+              <input type="file" id="fileInput" accept=".pdf" class="hidden" required />
+            </div>
+          </div>
+
+          <button type="submit" id="submitBtn" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-white text-slate-900 rounded-lg text-xs font-semibold tracking-wide transition shadow-sm flex items-center justify-center gap-2">
+            <span>Submit for Live Review</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Live Analysis Card (Revealed on Response) -->
+      <div id="reportSummary" class="hidden bg-slate-900/60 border border-slate-800/80 rounded-xl p-5 flex flex-col gap-3">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+          <span class="text-xs font-semibold text-slate-300">Audit Scorecard</span>
+          <span id="scoreBadge" class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">--/100</span>
+        </div>
+
+        <div>
+          <span class="text-[11px] font-mono uppercase text-slate-400">Strengths</span>
+          <ul id="strengthsList" class="text-xs text-slate-300 mt-1 space-y-1 list-disc list-inside"></ul>
+        </div>
+
+        <div>
+          <span class="text-[11px] font-mono uppercase text-slate-400">Areas for Improvement</span>
+          <ul id="improvementsList" class="text-xs text-slate-300 mt-1 space-y-1 list-disc list-inside"></ul>
+        </div>
+
+        <div class="pt-2">
+          <a id="downloadPdfLink" href="#" target="_blank" class="block w-full py-2 text-center rounded border border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-xs font-medium text-slate-200 transition">
+            Download Evaluation PDF Audit
+          </a>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Client-side Logic Script -->
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
+    const fileName = document.getElementById('fileName');
+    const uploadForm = document.getElementById('uploadForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const mentorStatus = document.getElementById('mentorStatus');
+    const transcriptText = document.getElementById('transcriptText');
+    const mentorAudio = document.getElementById('mentorAudio');
+    const visualizer = document.getElementById('visualizer');
+    const reportSummary = document.getElementById('reportSummary');
+    const scoreBadge = document.getElementById('scoreBadge');
+    const strengthsList = document.getElementById('strengthsList');
+    const improvementsList = document.getElementById('improvementsList');
+    const downloadPdfLink = document.getElementById('downloadPdfLink');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length > 0) {
+        fileName.innerText = fileInput.files[0].name;
+        fileName.classList.remove('text-slate-500');
+        fileName.classList.add('text-emerald-400');
+      }
+    });
+
+    uploadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!fileInput.files[0]) {
+        alert("Please attach a project report PDF.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Analyzing Architecture...";
+      mentorStatus.innerText = "Alex is scanning your submission...";
+
+      const formData = new FormData();
+      formData.append('student_name', document.getElementById('studentName').value);
+      formData.append('student_email', document.getElementById('studentEmail').value);
+      formData.append('week_no', document.getElementById('weekNo').value);
+      formData.append('file', fileInput.files[0]);
+
+      try {
+        const response = await fetch('/api/review/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          mentorStatus.innerText = "Speaking live feedback...";
+          transcriptText.innerText = `"${data.review.spoken_feedback}"`;
+
+          scoreBadge.innerText = `${data.review.score}/100`;
+
+          strengthsList.innerHTML = '';
+          data.review.strengths.forEach(s => {
+            const li = document.createElement('li');
+            li.innerText = s;
+            strengthsList.appendChild(li);
+          });
+
+          improvementsList.innerHTML = '';
+          data.review.improvements.forEach(imp => {
+            const li = document.createElement('li');
+            li.innerText = imp;
+            improvementsList.appendChild(li);
+          });
+
+          downloadPdfLink.href = data.pdf_download_url;
+          reportSummary.classList.remove('hidden');
+
+          // Play Audio
+          mentorAudio.src = data.voice_feedback_url;
+          mentorAudio.play();
+          visualizer.classList.remove('opacity-20');
+          visualizer.classList.add('opacity-100');
+
+          mentorAudio.onended = () => {
+            mentorStatus.innerText = "Feedback delivered. Copy sent to inbox.";
+            visualizer.classList.add('opacity-20');
+            visualizer.classList.remove('opacity-100');
+          };
+        } else {
+          mentorStatus.innerText = "Review failed. Please retry.";
+        }
+      } catch (err) {
+        console.error(err);
+        mentorStatus.innerText = "Network connection error.";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Submit for Live Review";
+      }
+    });
+  </script>
+</body>
+</html>
